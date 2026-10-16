@@ -1,0 +1,47 @@
+[project]
+name = "uniandes-miso-videojuegos-2027-demo-ec"
+version = "1.0.0"
+dependencies = ["pygame-ce"]
+
+[project.optional-dependencies]
+dev = ["basedpyright", "ruff"]
+
+[project.scripts]
+game = "main.__main__"
+
+[tool.basedpyright]
+include = ["src"]
+exclude = ["**/node_modules", "**/__pycache__", "**/.venv"]
+pythonVersion = "3.12"
+typeCheckingMode = "recommended"
+allowedUntypedLibraries = ["pygame-ce"]
+reportUnusedCallResult = false
+reportImportCycles = false
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pycache__",
+]
+
+line-length = 100
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
