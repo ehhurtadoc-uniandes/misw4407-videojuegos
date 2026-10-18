@@ -1,0 +1,50 @@
+import math
+import random
+
+import esper
+import pygame
+
+from src.ecs.components.c_transform import CTransform
+from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_enemy_spawner import CEnemySpawner
+
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_player import CTagPlayer
+
+
+def create_square(world: esper.World, size: pygame.Vector2, color: pygame.Color,
+                  pos: pygame.Vector2, vel: pygame.Vector2) -> int:
+    cuad_entity = world.create_entity()
+    world.add_component(cuad_entity, CSurface(size, color))
+    world.add_component(cuad_entity, CTransform(pos))
+    world.add_component(cuad_entity, CVelocity(vel))
+    return cuad_entity
+
+
+def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dict) -> int:
+    size = pygame.Vector2(enemy_info["size"]["x"], enemy_info["size"]["y"])
+    color = pygame.Color(enemy_info["color"]["r"],
+                         enemy_info["color"]["g"],
+                         enemy_info["color"]["b"])
+    speed = random.uniform(enemy_info["velocity_min"], enemy_info["velocity_max"])
+    angle = random.uniform(0, 2 * math.pi)
+    vel = pygame.Vector2(math.cos(angle), math.sin(angle)) * speed
+    enemy_entity = create_square(world, size, color, pygame.Vector2(pos), vel)
+    world.add_component(enemy_entity, CTagEnemy())
+    return enemy_entity
+
+
+def create_enemy_spawner(world: esper.World, level_cfg: dict) -> int:
+    spawner_entity = world.create_entity()
+    world.add_component(spawner_entity, CEnemySpawner(level_cfg))
+    return spawner_entity
+
+def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
+    size = pygame.Vector2(player_info["size"]["x"], player_info["size"]["y"])
+    color = pygame.Color(player_info["color"]["r"], player_info["color"]["g"], player_info["color"]["b"])
+    pos = pygame.Vector2(player_lvl_info["position"]["x"], player_lvl_info["position"]["y"])
+    vel = pygame.Vector2(0,0)
+    player_entity = create_square(world, size, color, pos, vel)
+    world.add_component(player_entity, CTagPlayer())
+    return player_entity

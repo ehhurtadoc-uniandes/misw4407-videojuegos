@@ -1,0 +1,26 @@
+{
+  "Blinky": {
+    "size": { "x": 40, "y": 40 },
+    "color": { "r": 255, "g": 0, "b": 0 },
+    "velocity_min": 80,
+    "velocity_max": 150
+  },
+  "Pinky": {
+    "size": { "x": 40, "y": 40 },
+    "color": { "r": 255, "g": 184, "b": 255 },
+    "velocity_min": 60,
+    "velocity_max": 120
+  },
+  "Inky": {
+    "size": { "x": 40, "y": 40 },
+    "color": { "r": 0, "g": 255, "b": 255 },
+    "velocity_min": 50,
+    "velocity_max": 110
+  },
+  "Clyde": {
+    "size": { "x": 40, "y": 40 },
+    "color": { "r": 255, "g": 184, "b": 82 },
+    "velocity_min": 30,
+    "velocity_max": 80
+  }
+}

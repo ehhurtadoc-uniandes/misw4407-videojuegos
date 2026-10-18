@@ -1,0 +1,11 @@
+{
+    "player_spawn": {
+        "position": {
+            "x": 320,
+            "y": 180
+        }
+    },
+    "size": { "x": 30, "y": 30 },
+    "color": { "r": 255, "g": 255, "b": 0  },
+    "input_velocity": {}
+}
