@@ -26,7 +26,7 @@ def create_square(world: esper.World, size: pygame.Vector2, color: pygame.Color,
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
                   surface: pygame.Surface) -> int:
     sprite_entity = world.create_entity()
-    world.add_component(sprite_entity, CSurface(size, color))
+    world.add_component(sprite_entity, CSurface.from_surface(surface))
     world.add_component(sprite_entity, CTransform(pos))
     world.add_component(sprite_entity, CVelocity(vel))
     return sprite_entity
@@ -72,13 +72,12 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
 
 def create_bullet(world: esper.World, bullet_info: dict, player_pos: pygame.Vector2,
                   player_size: pygame.Vector2, target_pos: pygame.Vector2) -> None:
-    size = pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"])
-    color = pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"], bullet_info["color"]["b"])
+    bullet_surface = pygame.image.load(bullet_info["image"])
     player_center = player_pos + player_size / 2
     direction = target_pos - player_center
     if direction.length_squared() == 0:
         return
     vel = direction.normalize() * bullet_info["velocity"]
-    pos = player_center - size / 2
-    bullet_entity = create_square(world, size, color, pos, vel)
+    pos = pygame.Vector2(player_pos.x + player_size[0]/2, player_pos.y + player_size[1]/2)
+    bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
