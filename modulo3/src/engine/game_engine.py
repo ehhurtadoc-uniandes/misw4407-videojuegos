@@ -5,6 +5,7 @@ import esper
 import pygame
 
 from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet
+from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
@@ -94,6 +95,7 @@ class GameEngine:
         system_screen_bullet(self.ecs_world, self.screen)
         system_collision_player_enemy(self.ecs_world, self._player_entity, self._player_spawn)
         system_collision_enemy_bullet(self.ecs_world)
+        system_animation(self.ecs_world, self.delta_time)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):

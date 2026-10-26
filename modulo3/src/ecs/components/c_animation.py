@@ -13,6 +13,7 @@ class CAnimation:
             self.animations_list.append(anim_data)
         self.current_animation = 0 
         self.current_animation_time = self.animations_list[self.current_animation].framerate
+        self.current_frame = self.animations_list[self.current_animation].start
         
 
 class AnimationData:
