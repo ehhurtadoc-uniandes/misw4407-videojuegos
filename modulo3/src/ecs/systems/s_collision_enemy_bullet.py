@@ -12,11 +12,13 @@ def system_collision_enemy_bullet(world: esper.World) -> None:
     c_t: CTransform
     c_s: CSurface
     for bullet_entity, (b_t, b_s, _) in bullets:
-        bullet_rect = b_s.surf.get_rect(topleft=b_t.pos)
+        bullet_rect =  b_s.area.copy()
+        bullet_rect.topleft = b_t.pos
         for enemy_entity, (c_t, c_s, _) in enemies:
             if not world.entity_exists(enemy_entity):
                 continue
-            enemy_rect = c_s.surf.get_rect(topleft=c_t.pos)
+            enemy_rect = c_s.area.copy()
+            enemy_rect.topleft = c_t.pos
             if enemy_rect.colliderect(bullet_rect):
                 world.delete_entity(enemy_entity)
                 world.delete_entity(bullet_entity)

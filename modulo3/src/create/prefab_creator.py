@@ -4,6 +4,7 @@ import random
 import esper
 import pygame
 
+from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_surface import CSurface
@@ -61,12 +62,13 @@ def create_input_player(world: esper.World) -> None:
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
-    size = pygame.Vector2(player_info["size"]["x"], player_info["size"]["y"])
-    color = pygame.Color(player_info["color"]["r"], player_info["color"]["g"], player_info["color"]["b"])
-    pos = pygame.Vector2(player_lvl_info["position"]["x"], player_lvl_info["position"]["y"])
+    player_sprite = pygame.image.load(player_info["image"]).convert_alpha()
+    size = player_sprite.get_size()
+    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] /2), player_lvl_info["position"]["y"] - (size[1] /2))
     vel = pygame.Vector2(0,0)
-    player_entity = create_square(world, size, color, pos, vel)
+    player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CAnimation(player_info["animations"]))
     return player_entity
 
 
