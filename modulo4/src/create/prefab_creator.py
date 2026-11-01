@@ -13,7 +13,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_input_command import CInputCommand
 
-from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy, EnemyType
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
@@ -48,7 +48,7 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
     angle = random.uniform(0, 2 * math.pi)
     vel = pygame.Vector2(math.cos(angle), math.sin(angle)) * speed
     enemy_entity = create_sprite(world, pygame.Vector2(pos), vel, enemy_sprite)
-    world.add_component(enemy_entity, CTagEnemy())
+    world.add_component(enemy_entity, CTagEnemy(EnemyType.BOUNCER))
     _add_animation(world, enemy_entity, enemy_info)
     return enemy_entity
 
@@ -56,7 +56,7 @@ def create_enemy_square(world: esper.World, pos: pygame.Vector2, enemy_info: dic
 def create_enemy_hunter(world: esper.World, pos: pygame.Vector2, hunter_info: dict) -> int:
     hunter_sprite = pygame.image.load(hunter_info["image"]).convert_alpha()
     hunter_entity = create_sprite(world, pygame.Vector2(pos), pygame.Vector2(0, 0), hunter_sprite)
-    world.add_component(hunter_entity, CTagEnemy())
+    world.add_component(hunter_entity, CTagEnemy(EnemyType.HUNTER))
     world.add_component(hunter_entity, CEnemyHunter(pos, hunter_info))
     _add_animation(world, hunter_entity, hunter_info)
     return hunter_entity
