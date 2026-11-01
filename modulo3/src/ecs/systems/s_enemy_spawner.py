@@ -1,7 +1,7 @@
 import esper
 
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
-from src.create.prefab_creator import create_enemy_square
+from src.create.prefab_creator import create_enemy
 
 
 def system_enemy_spawner(world: esper.World, enemies_cfg: dict, delta_time: float) -> None:
@@ -11,5 +11,5 @@ def system_enemy_spawner(world: esper.World, enemies_cfg: dict, delta_time: floa
         c_spw.elapsed_time += delta_time
         for event in c_spw.spawn_events:
             if not event.triggered and c_spw.elapsed_time >= event.time:
-                create_enemy_square(world, event.position, enemies_cfg[event.enemy_type])
+                create_enemy(world, event.position, enemies_cfg[event.enemy_type])
                 event.triggered = True

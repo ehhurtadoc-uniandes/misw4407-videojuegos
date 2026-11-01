@@ -11,15 +11,15 @@ class CAnimation:
                                       anim["end"],
                                       anim["framerate"])
             self.animations_list.append(anim_data)
-        self.current_animation = 0 
+        self.current_animation = 0
         self.current_animation_time = self.animations_list[self.current_animation].framerate
         self.current_frame = self.animations_list[self.current_animation].start
-        
+        self.completed_loops = 0
+
 
 class AnimationData:
-    def __init__(self, name: str, start: int, end, framerate: float) -> None:
+    def __init__(self, name: str, start: int, end: int, framerate: float) -> None:
         self.name = name
         self.start = start
         self.end = end
-        self.framerate = 1.0 / framerate        
-        
+        self.framerate = 1.0 / framerate

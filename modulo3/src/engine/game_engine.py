@@ -6,8 +6,11 @@ import pygame
 
 from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
+from src.ecs.systems.s_explosion import system_explosion
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_screen_player import system_screen_player
@@ -53,6 +56,8 @@ class GameEngine:
             self.player_cfg = json.load(player_file)
         with open("assets/cfg/bullet.json", encoding="utf-8") as bullet_file:
             self.bullet_cfg = json.load(bullet_file)
+        with open("assets/cfg/explosion.json", encoding="utf-8") as explosion_file:
+            self.explosion_cfg = json.load(explosion_file)
 
     async def run(self) -> None:
         self._create()
@@ -89,13 +94,17 @@ class GameEngine:
 
     def _update(self):
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
+        system_enemy_hunter_state(self.ecs_world, self._player_entity, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
+        system_player_state(self.ecs_world)
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(self.ecs_world, self.screen)
         system_screen_bullet(self.ecs_world, self.screen)
-        system_collision_player_enemy(self.ecs_world, self._player_entity, self._player_spawn)
-        system_collision_enemy_bullet(self.ecs_world)
+        system_collision_player_enemy(self.ecs_world, self._player_entity, self._player_spawn,
+                                      self.explosion_cfg)
+        system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg)
         system_animation(self.ecs_world, self.delta_time)
+        system_explosion(self.ecs_world)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
@@ -132,5 +141,5 @@ class GameEngine:
             if c_input.phase == CommandPhase.START:
                 if len(self.ecs_world.get_component(CTagBullet)) < self._max_bullets:
                     create_bullet(self.ecs_world, self.bullet_cfg,
-                                  self._player_c_t.pos, pygame.Vector2(self._player_c_s.surf.get_size()),
+                                  self._player_c_t.pos, pygame.Vector2(self._player_c_s.area.size),
                                   pygame.Vector2(pygame.mouse.get_pos()))
