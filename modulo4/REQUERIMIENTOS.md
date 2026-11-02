@@ -7,8 +7,8 @@ Complementar el programa del ejercicio 3 con la siguiente funcionalidad:
 - [x] Texto con el título en la pantalla principal del juego.
 - [x] Evento para pausar y reanudar con la tecla `P`, mostrando un texto que indica que el juego está pausado.
 - [x] Efectos de sonido para las colisiones.
-- [ ] Efecto de sonido para el movimiento del personaje.
-- [ ] Los efectos suenan en los momentos adecuados.
+- [x] Efecto de sonido para el movimiento del personaje.
+- [x] Los efectos suenan en los momentos adecuados.
 - [ ] Patrón **Service Locator** para **todos** los recursos externos (imagen, sonido, fuentes y archivos de configuración).
 - [ ] Característica única del juego, implementada con ECS.
 - [ ] Juego publicado en itch.io y enlace en `README.txt`.
@@ -33,7 +33,7 @@ Se asocian a cada entidad con el parámetro `sound`:
 - [x] Balas: suenan al aparecer (`bullet.json`, `sound`).
 - [x] Explosiones: suenan al aparecer (`explosion.json`, `sound`).
 - [x] Hunter: suena solo al comenzar a perseguir al jugador (`enemies.json`, `sound_chase`).
-- [ ] Movimiento del personaje. `player.json` no trae un sonido para esto, así que se debe definir aparte.
+- [x] Movimiento del personaje: suena en bucle mientras se mueve (`sounds.json`, `player_move`). Se define aparte porque `player.json` no trae un sonido para esto.
 
 ## Interfaz: `interface.json`
 
