@@ -82,7 +82,7 @@ Condiciones del enunciado:
 ## Recursos
 
 - [x] Fuente `PressStart2P.ttf` y sonidos base copiados a `assets/`.
-- [ ] Reemplazar `assets/snd/ufo.ogg` por la versión de verificación, que es distinta.
+- [x] Reemplazar `assets/snd/ufo.ogg` por la versión de verificación.
 - [x] Copiar `shield.png` y `laser_special.ogg`. `bullet_especial.png` no se copia porque el escudo no lo usa.
 - [x] Actualizar el título de `window.json` a `MISO - Ejercicio 04`.
 - [ ] Revisar la licencia de cualquier recurso externo que se agregue.
@@ -97,7 +97,7 @@ Sitios recomendados: <https://opengameart.org/>, <https://kenney.nl/>, <https://
 
 ## Restricciones
 
-- [ ] Los archivos de verificación pueden reemplazar a los del proyecto sin romper el juego.
+- [x] Los archivos de verificación pueden reemplazar a los del proyecto sin romper el juego. `interface.json`, `sounds.json` y `special.json` son propios y deben conservarse, junto con `ufo_floating.ogg`.
 - [x] Los sistemas no cargan archivos directamente.
 - [x] Los temporizadores usan `delta_time`, para que se detengan durante la pausa.
 
