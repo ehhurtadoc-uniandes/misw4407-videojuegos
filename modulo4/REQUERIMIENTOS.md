@@ -5,7 +5,7 @@
 Complementar el programa del ejercicio 3 con la siguiente funcionalidad:
 
 - [x] Texto con el título en la pantalla principal del juego.
-- [ ] Evento para pausar y reanudar con la tecla `P`, mostrando un texto que indica que el juego está pausado.
+- [x] Evento para pausar y reanudar con la tecla `P`, mostrando un texto que indica que el juego está pausado.
 - [x] Efectos de sonido para las colisiones.
 - [ ] Efecto de sonido para el movimiento del personaje.
 - [ ] Los efectos suenan en los momentos adecuados.
@@ -51,10 +51,11 @@ Archivo de creación propia. Su estructura es libre, pero debe existir y usarse 
 
 ## Pausa
 
-- [ ] Pausar y reanudar consiste en ejecutar o no los sistemas pertinentes.
-- [ ] El texto de pausa aparece al pausar y desaparece al reanudar.
-- [ ] Soltar o presionar teclas de movimiento durante la pausa no deja a la nave moviéndose sola al reanudar.
-- [ ] No se puede disparar ni activar la característica única durante la pausa.
+- [x] Pausar y reanudar consiste en ejecutar o no los sistemas pertinentes.
+- [x] El texto de pausa aparece al pausar y desaparece al reanudar.
+- [x] Soltar o presionar teclas de movimiento durante la pausa no deja a la nave moviéndose sola al reanudar.
+- [x] No se puede disparar durante la pausa.
+- [ ] No se puede activar la característica única durante la pausa.
 
 ## Característica única
 

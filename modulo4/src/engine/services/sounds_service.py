@@ -9,3 +9,9 @@ class SoundsService:
         if path not in self._sounds:
             self._sounds[path] = pygame.mixer.Sound(path)
         self._sounds[path].play()
+
+    def pause_all(self) -> None:
+        pygame.mixer.pause()
+
+    def resume_all(self) -> None:
+        pygame.mixer.unpause()
