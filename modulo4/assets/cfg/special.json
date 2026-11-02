@@ -1,0 +1,31 @@
+{
+    "image": "assets/img/shield.png",
+    "sound": "assets/snd/laser_special.ogg",
+    "animations": {
+        "number_frames": 4,
+        "list": [
+            {
+                "name": "ACTIVE",
+                "start": 0,
+                "end": 3,
+                "framerate": 12
+            }
+        ]
+    },
+    "duration": 2.0,
+    "cooldown": 5.0,
+    "radius": 64,
+    "pulse": {
+        "color": {
+            "r": 120,
+            "g": 190,
+            "b": 255
+        },
+        "expand_time": 0.2,
+        "thickness": 2
+    },
+    "shake": {
+        "intensity": 3,
+        "duration": 0.2
+    }
+}

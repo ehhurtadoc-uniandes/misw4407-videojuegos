@@ -10,7 +10,7 @@ Complementar el programa del ejercicio 3 con la siguiente funcionalidad:
 - [x] Efecto de sonido para el movimiento del personaje.
 - [x] Los efectos suenan en los momentos adecuados.
 - [x] Patrón **Service Locator** para **todos** los recursos externos (imagen, sonido, fuentes y archivos de configuración).
-- [ ] Característica única del juego, implementada con ECS.
+- [x] Característica única del juego, implementada con ECS.
 - [ ] Juego publicado en itch.io y enlace en `README.txt`.
 
 Un ejemplo del resultado está en el sitio del curso: **SEMANA CUATRO - EJERCICIO - RESULTADO WEB**. No es obligatorio usarlo como plantilla.
@@ -55,35 +55,35 @@ Archivo de creación propia. Su estructura es libre, pero debe existir y usarse 
 - [x] El texto de pausa aparece al pausar y desaparece al reanudar.
 - [x] Soltar o presionar teclas de movimiento durante la pausa no deja a la nave moviéndose sola al reanudar.
 - [x] No se puede disparar durante la pausa.
-- [ ] No se puede activar la característica única durante la pausa.
+- [x] No se puede activar la característica única durante la pausa.
 
 ## Característica única
 
 Condiciones del enunciado:
 
-- [ ] Usa un elemento de input del teclado o el ratón.
-- [ ] Es temporal y requiere recargar.
-- [ ] Tiene un elemento visible diferente de los actuales.
-- [ ] La recarga se ve en una barra de carga o en un número en pantalla.
-- [ ] Aplica elementos de gamefeel.
-- [ ] Hay instrucciones de input muy simples en pantalla.
-- [ ] Respeta el patrón ECS de principio a fin.
+- [x] Usa un elemento de input del teclado o el ratón.
+- [x] Es temporal y requiere recargar.
+- [x] Tiene un elemento visible diferente de los actuales.
+- [x] La recarga se ve en una barra de carga o en un número en pantalla.
+- [x] Aplica elementos de gamefeel.
+- [x] Hay instrucciones de input muy simples en pantalla.
+- [x] Respeta el patrón ECS de principio a fin.
 
 ### Diseño elegido: escudo de pulso
 
-- [ ] Se activa con clic derecho o Espacio.
-- [ ] Dura 2 segundos, con la animación `shield.png` alrededor de la nave y el sonido `laser_special.ogg`.
-- [ ] Destruye a los enemigos dentro de un radio.
-- [ ] Se recarga en 5 segundos, con barra en pantalla y texto `LISTO`.
-- [ ] Gamefeel: vibración de pantalla al destruir enemigos y pulso visual al activarse.
-- [ ] Configuración en un archivo propio (`special.json`).
-- [ ] Componente `CSpecialAbility`, entidad del escudo, `system_special_ability` y `system_hud`.
+- [x] Se activa con clic derecho o Espacio.
+- [x] Dura 2 segundos, con la animación `shield.png` alrededor de la nave y el sonido `laser_special.ogg`.
+- [x] Destruye a los enemigos dentro de un radio.
+- [x] Se recarga en 5 segundos, con barra en pantalla, cuenta regresiva y texto `LISTO`.
+- [x] Gamefeel: vibración de pantalla al destruir enemigos y pulso visual que se expande hasta el radio.
+- [x] Configuración en un archivo propio (`special.json`).
+- [x] Componentes `CSpecialAbility`, `CPulse`, `CScreenShake`, `CHudBar` y `CHudText`; entidades del escudo y del pulso; sistemas `system_special_ability`, `system_pulse`, `system_screen_shake` y `system_hud`.
 
 ## Recursos
 
 - [x] Fuente `PressStart2P.ttf` y sonidos base copiados a `assets/`.
 - [ ] Reemplazar `assets/snd/ufo.ogg` por la versión de verificación, que es distinta.
-- [ ] Copiar `shield.png`, `bullet_especial.png` y `laser_special.ogg`.
+- [x] Copiar `shield.png` y `laser_special.ogg`. `bullet_especial.png` no se copia porque el escudo no lo usa.
 - [x] Actualizar el título de `window.json` a `MISO - Ejercicio 04`.
 - [ ] Revisar la licencia de cualquier recurso externo que se agregue.
 
@@ -99,7 +99,7 @@ Sitios recomendados: <https://opengameart.org/>, <https://kenney.nl/>, <https://
 
 - [ ] Los archivos de verificación pueden reemplazar a los del proyecto sin romper el juego.
 - [x] Los sistemas no cargan archivos directamente.
-- [ ] Los temporizadores usan `delta_time`, para que se detengan durante la pausa.
+- [x] Los temporizadores usan `delta_time`, para que se detengan durante la pausa.
 
 ## Rúbrica (100%)
 
