@@ -1,0 +1,16 @@
+{
+    "title": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "ASTRO PULSE",
+        "size": 16,
+        "color": {
+            "r": 255,
+            "g": 200,
+            "b": 60
+        },
+        "position": {
+            "x": 320,
+            "y": 8
+        }
+    }
+}
