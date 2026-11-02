@@ -4,7 +4,7 @@ import json
 import esper
 import pygame
 
-from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet
+from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet, create_text
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
@@ -12,6 +12,7 @@ from src.ecs.systems.s_explosion import system_explosion
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rendering import system_rendering
+from src.ecs.systems.s_rendering_text import system_rendering_text
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_screen_player import system_screen_player
 from src.ecs.systems.s_screen_bullet import system_screen_bullet
@@ -33,8 +34,7 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
         self.screen = pygame.display.set_mode(
-            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]),
-            pygame.SCALED)
+            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]))
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.framerate = self.window_cfg["framerate"]
@@ -58,6 +58,8 @@ class GameEngine:
             self.bullet_cfg = json.load(bullet_file)
         with open("assets/cfg/explosion.json", encoding="utf-8") as explosion_file:
             self.explosion_cfg = json.load(explosion_file)
+        with open("assets/cfg/interface.json", encoding="utf-8") as interface_file:
+            self.interface_cfg = json.load(interface_file)
 
     async def run(self) -> None:
         self._create()
@@ -81,6 +83,7 @@ class GameEngine:
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
+        create_text(self.ecs_world, self.interface_cfg["title"])
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -110,6 +113,7 @@ class GameEngine:
     def _draw(self):
         self.screen.fill(self.bg_color)
         system_rendering(self.ecs_world, self.screen)
+        system_rendering_text(self.ecs_world, self.screen)
         pygame.display.flip()
 
     def _clean(self):

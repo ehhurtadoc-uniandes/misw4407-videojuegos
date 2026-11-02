@@ -17,6 +17,7 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy, EnemyType
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_text import CTagText
 from src.engine.service_locator import ServiceLocator
 
 
@@ -120,6 +121,18 @@ def create_explosion(world: esper.World, center: pygame.Vector2, explosion_info:
     _add_animation(world, explosion_entity, explosion_info)
     ServiceLocator.sounds_service.play(explosion_info["sound"])
     return explosion_entity
+
+
+def create_text(world: esper.World, text_info: dict) -> int:
+    font = ServiceLocator.fonts_service.get(text_info["font"], text_info["size"])
+    color = pygame.Color(text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])
+    c_s = CSurface.from_text(text_info["text"], font, color)
+    pos = pygame.Vector2(text_info["position"]["x"] - c_s.area.w / 2, text_info["position"]["y"])
+    text_entity = world.create_entity()
+    world.add_component(text_entity, c_s)
+    world.add_component(text_entity, CTransform(pos))
+    world.add_component(text_entity, CTagText())
+    return text_entity
 
 
 def _get_frame_size(surface: pygame.Surface, info: dict) -> pygame.Vector2:

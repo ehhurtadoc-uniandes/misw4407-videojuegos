@@ -1,107 +1,119 @@
-# Ejercicio Semana 1: Rectángulos que rebotan
+# Ejercicio Semana 4: Sonidos, textos, pausa, Service Locator y característica única
 
 ## Resumen
 
-Crear un programa que genere una serie de rectángulos de diferentes colores que rebotan en la pantalla. Cada rectángulo tiene un tiempo de aparición (en segundos), un tamaño (x, y), una posición (esquina superior izquierda), un color, una velocidad y una dirección al azar. Toda esta información se obtiene de archivos de configuración.
+Complementar el programa del ejercicio 3 con la siguiente funcionalidad:
 
-## Requerimientos generales
+- [x] Texto con el título en la pantalla principal del juego.
+- [ ] Evento para pausar y reanudar con la tecla `P`, mostrando un texto que indica que el juego está pausado.
+- [x] Efectos de sonido para las colisiones.
+- [ ] Efecto de sonido para el movimiento del personaje.
+- [ ] Los efectos suenan en los momentos adecuados.
+- [ ] Patrón **Service Locator** para **todos** los recursos externos (imagen, sonido, fuentes y archivos de configuración).
+- [ ] Característica única del juego, implementada con ECS.
+- [ ] Juego publicado en itch.io y enlace en `README.txt`.
 
-- [x] El programa funciona y cumple los requerimientos con los archivos de configuración dados.
-- [x] El programa funciona con archivos de configuración modificados. Debe soportar:
-  - [x] Cambios en las características de la ventana.
-  - [x] Cambios en los rectángulos generados.
-  - [x] Agregar o eliminar rectángulos en el sistema de eventos (puede haber más de seis o ninguno).
-- [x] Todo se implementa bajo el marco **ECS**.
-- [x] Los componentes y sistemas son fácilmente identificables y tienen un comportamiento único:
-  - Los componentes no tienen lógica.
-  - Los sistemas solo manipulan los datos de los componentes que solicitan.
-- [x] El patrón **gameloop** es claramente identificable, con secciones de iniciar, calcular tiempo, actualizar, dibujar y terminar.
+Un ejemplo del resultado está en el sitio del curso: **SEMANA CUATRO - EJERCICIO - RESULTADO WEB**. No es obligatorio usarlo como plantilla.
 
-## Archivos de configuración
+## Service Locator
 
-### `window.json`: ventana
+- [x] Clase `ServiceLocator` que guarda los servicios de carga.
+- [x] Servicio de imágenes (`images_service`).
+- [x] Servicio de sonidos (`sounds_service`).
+- [x] Servicio de fuentes.
+- [ ] Servicio de configuraciones (`ConfigsService`) que administra los recursos JSON del juego.
+- [ ] Modificar la carga actual de JSON: `game_engine.py` no debe usar `open()` ni `json.load()` directamente.
+- [ ] Cada servicio tiene métodos específicos para su tipo de recurso.
 
-| Propiedad | Llave |
-|---|---|
-| Título | `title` |
-| Tamaño en píxeles | `size.w`, `size.h` |
-| Color de fondo | `bg_color.r`, `bg_color.g`, `bg_color.b` |
-| Framerate | `framerate` |
+## Sonidos
 
-### `enemies.json`: tipos de rectángulo
+Se asocian a cada entidad con el parámetro `sound`:
 
-Cada tipo se identifica por su nombre (la llave del objeto) y tiene:
+- [x] Asteroides: suenan al aparecer (`enemies.json`, `sound`).
+- [x] Balas: suenan al aparecer (`bullet.json`, `sound`).
+- [x] Explosiones: suenan al aparecer (`explosion.json`, `sound`).
+- [x] Hunter: suena solo al comenzar a perseguir al jugador (`enemies.json`, `sound_chase`).
+- [ ] Movimiento del personaje. `player.json` no trae un sonido para esto, así que se debe definir aparte.
 
-| Propiedad | Llave |
-|---|---|
-| Tamaño | `size.x`, `size.y` |
-| Color | `color.r`, `color.g`, `color.b` |
-| Velocidad mínima | `velocity_min` |
-| Velocidad máxima | `velocity_max` |
+## Interfaz: `interface.json`
 
-### `level_01.json`: eventos de aparición
+Archivo de creación propia. Su estructura es libre, pero debe existir y usarse para las propiedades básicas de los textos:
 
-Lista `enemy_spawn_events`. Cada evento especifica:
+- [x] Ruta de la fuente `.ttf`, cargada con el Service Locator.
+- [x] Contenido del texto.
+- [x] Color del texto.
+- [x] Tamaño del texto.
 
-| Propiedad | Llave |
-|---|---|
-| Tipo de rectángulo (nombre en `enemies.json`) | `enemy_type` |
-| Tiempo de aparición en segundos | `time` |
-| Posición (esquina superior izquierda) | `position.x`, `position.y` |
+## Textos
 
-- La velocidad se asigna al azar entre `velocity_min` y `velocity_max`.
-- El ángulo de dirección inicial se asigna al azar.
+- [x] Modificar `CSurface` con un método de clase `from_text` para crear texto estático.
+- [ ] El texto dinámico se actualiza dentro de un sistema: ejecuta `font.render` con el texto adecuado y reemplaza la superficie y el área del componente.
 
-## Detalles de implementación
+## Pausa
 
-### Spawner
+- [ ] Pausar y reanudar consiste en ejecutar o no los sistemas pertinentes.
+- [ ] El texto de pausa aparece al pausar y desaparece al reanudar.
+- [ ] Soltar o presionar teclas de movimiento durante la pausa no deja a la nave moviéndose sola al reanudar.
+- [ ] No se puede disparar ni activar la característica única durante la pausa.
 
-- [x] Crear el componente `CEnemySpawner` y el sistema `system_enemy_spawner`.
-- [x] Debe existir **una única** entidad con **un** componente `CEnemySpawner`.
-- [x] El componente guarda la información del nivel cargado. No se trabaja directamente con el JSON del nivel.
-- [x] El sistema crea los rectángulos uno por uno cuando el tiempo transcurrido es igual o mayor al tiempo de cada evento.
-- [x] El paso del tiempo se registra con `delta_time`. **No** se permiten Timers ni Schedulers nativos de Python.
-- [x] Recomendado: cada evento tiene una marca que indica si ya fue disparado, para ignorarlo después.
+## Característica única
 
-### Restricciones
+Condiciones del enunciado:
 
-- [x] **No** se cargan archivos JSON dentro de un sistema. Se cargan desde el motor (u otra clase) y quedan listos para usarse.
-- [x] Los otros JSON (`window.json`, `enemies.json`) pueden estar precargados en el motor.
-- [x] Los sistemas solo usan datos obtenidos a través de ECS y no tienen lógica adicional a su propósito.
+- [ ] Usa un elemento de input del teclado o el ratón.
+- [ ] Es temporal y requiere recargar.
+- [ ] Tiene un elemento visible diferente de los actuales.
+- [ ] La recarga se ve en una barra de carga o en un número en pantalla.
+- [ ] Aplica elementos de gamefeel.
+- [ ] Hay instrucciones de input muy simples en pantalla.
+- [ ] Respeta el patrón ECS de principio a fin.
 
-### Elementos que deben estar en ECS
+### Diseño elegido: escudo de pulso
 
-- [x] Dibujado de rectángulos
-- [x] Movimiento
-- [x] Rebote
-- [x] Spawner
+- [ ] Se activa con clic derecho o Espacio.
+- [ ] Dura 2 segundos, con la animación `shield.png` alrededor de la nave y el sonido `laser_special.ogg`.
+- [ ] Destruye a los enemigos dentro de un radio.
+- [ ] Se recarga en 5 segundos, con barra en pantalla y texto `LISTO`.
+- [ ] Gamefeel: vibración de pantalla al destruir enemigos y pulso visual al activarse.
+- [ ] Configuración en un archivo propio (`special.json`).
+- [ ] Componente `CSpecialAbility`, entidad del escudo, `system_special_ability` y `system_hud`.
 
-## Dónde está implementado
+## Recursos
 
-| Requerimiento | Archivo |
-|---|---|
-| Gameloop y carga de JSON | `src/engine/game_engine.py` |
-| Componentes | `src/ecs/components/` (`c_transform`, `c_velocity`, `c_surface`, `c_enemy_spawner`) |
-| Movimiento | `src/ecs/systems/s_movement.py` |
-| Rebote | `src/ecs/systems/s_screen_bounce.py` |
-| Dibujado | `src/ecs/systems/s_rendering.py` |
-| Spawner | `src/ecs/systems/s_enemy_spawner.py` |
-| Creación de entidades | `src/create/prefab_creator.py` |
+- [x] Fuente `PressStart2P.ttf` y sonidos base copiados a `assets/`.
+- [ ] Reemplazar `assets/snd/ufo.ogg` por la versión de verificación, que es distinta.
+- [ ] Copiar `shield.png`, `bullet_especial.png` y `laser_special.ogg`.
+- [x] Actualizar el título de `window.json` a `MISO - Ejercicio 04`.
+- [ ] Revisar la licencia de cualquier recurso externo que se agregue.
 
-## Rúbrica (100 puntos)
+Sitios recomendados: <https://opengameart.org/>, <https://kenney.nl/>, <https://freesound.org/>, <https://indiegamemusic.com/>.
 
-| Dimensión | Puntos | Criterio para "Excelente" |
+## Distribución
+
+- [ ] Subir el juego a itch.io, en despliegue web o ejecutable descargable.
+- [ ] Si es ejecutable, que sea para Windows o Linux. Mac se acepta, pero se prefiere evitarlo.
+- [ ] Incluir `README.txt` con el enlace a itch.io.
+
+## Restricciones
+
+- [ ] Los archivos de verificación pueden reemplazar a los del proyecto sin romper el juego.
+- [ ] Los sistemas no cargan archivos directamente.
+- [ ] Los temporizadores usan `delta_time`, para que se detengan durante la pausa.
+
+## Rúbrica (100%)
+
+| Dimensión | Peso | Criterio para "Excelente" |
 |---|---|---|
-| Funcionamiento básico | 12 | El programa ejecuta correctamente. |
-| Sistema de Spawner | 12 | Crea rectángulos respetando el tiempo de creación y en el orden correcto. |
-| Uso de ECS | 20 | Usa ECS completamente con sistemas y componentes. |
-| Colores y tamaños | 8 | El sistema de dibujo usa el color y tamaño correctos. |
-| Sistema de movimiento | 12 | Toma en cuenta correctamente las velocidades y los rebotes. |
-| Uso del patrón gameloop | 20 | El gameloop es claro y bien estructurado (nada de actualizar o calcular tiempo en la sección de dibujar). |
-| Uso de archivos de configuración | 8 | Carga y usa todos los elementos de configuración y acepta cambios. |
-| Archivos extra de configuración | 8 | Funciona con todos los archivos de configuración de ejemplo. |
+| Funcionamiento básico | 10% | El programa ejecuta correctamente. |
+| Carga y despliegue de sprites, sonidos y configuración | 10% | El programa carga correctamente los recursos. |
+| Carga y despliegue de texto y fuentes | 10% | El programa carga correctamente textos. |
+| Pausar y reanudar el juego | 10% | Pausa y reanuda correctamente y muestra un texto de pausa. |
+| Patrón Service Locator para todos los recursos externos | 20% | Usa completamente el patrón Service Locator. |
+| Característica única del juego | 20% | Se despliega correctamente junto con el uso del patrón ECS. |
+| Publicación en itch.io | 20% | Está publicado en itch.io listo para jugar o descargar. |
 
 ## Entrega
 
 - Subir el ZIP del proyecto entero con el programa funcionando.
-- Probar antes con los archivos de verificación del sitio del curso (SEMANA UNO - EJERCICIO - RECURSOS PARA VERIFICACIÓN).
+- El ZIP debe contener `README.txt` con el enlace a itch.io del juego compilado.
+- Probar antes con los archivos del sitio del curso (SEMANA CUATRO - EJERCICIO - RECURSOS PARA VERIFICACIÓN).
