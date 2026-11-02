@@ -9,7 +9,7 @@ Complementar el programa del ejercicio 3 con la siguiente funcionalidad:
 - [x] Efectos de sonido para las colisiones.
 - [x] Efecto de sonido para el movimiento del personaje.
 - [x] Los efectos suenan en los momentos adecuados.
-- [ ] Patrón **Service Locator** para **todos** los recursos externos (imagen, sonido, fuentes y archivos de configuración).
+- [x] Patrón **Service Locator** para **todos** los recursos externos (imagen, sonido, fuentes y archivos de configuración).
 - [ ] Característica única del juego, implementada con ECS.
 - [ ] Juego publicado en itch.io y enlace en `README.txt`.
 
@@ -21,9 +21,9 @@ Un ejemplo del resultado está en el sitio del curso: **SEMANA CUATRO - EJERCICI
 - [x] Servicio de imágenes (`images_service`).
 - [x] Servicio de sonidos (`sounds_service`).
 - [x] Servicio de fuentes.
-- [ ] Servicio de configuraciones (`ConfigsService`) que administra los recursos JSON del juego.
-- [ ] Modificar la carga actual de JSON: `game_engine.py` no debe usar `open()` ni `json.load()` directamente.
-- [ ] Cada servicio tiene métodos específicos para su tipo de recurso.
+- [x] Servicio de configuraciones (`ConfigsService`) que administra los recursos JSON del juego.
+- [x] Modificar la carga actual de JSON: `game_engine.py` no debe usar `open()` ni `json.load()` directamente.
+- [x] Cada servicio tiene métodos específicos para su tipo de recurso.
 
 ## Sonidos
 
@@ -98,7 +98,7 @@ Sitios recomendados: <https://opengameart.org/>, <https://kenney.nl/>, <https://
 ## Restricciones
 
 - [ ] Los archivos de verificación pueden reemplazar a los del proyecto sin romper el juego.
-- [ ] Los sistemas no cargan archivos directamente.
+- [x] Los sistemas no cargan archivos directamente.
 - [ ] Los temporizadores usan `delta_time`, para que se detengan durante la pausa.
 
 ## Rúbrica (100%)
