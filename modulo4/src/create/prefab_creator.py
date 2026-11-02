@@ -76,11 +76,13 @@ def create_input_player(world: esper.World) -> None:
     input_up = world.create_entity()
     input_down = world.create_entity()
     input_fire = world.create_entity()
+    input_pause = world.create_entity()
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
     world.add_component(input_up, CInputCommand("PLAYER_UP", pygame.K_UP))
     world.add_component(input_down, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
     world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
+    world.add_component(input_pause, CInputCommand("GAME_PAUSE", pygame.K_p))
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:

@@ -25,6 +25,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.engine.service_locator import ServiceLocator
 
 
 class GameEngine:
@@ -37,6 +38,8 @@ class GameEngine:
             (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]))
         self.clock = pygame.time.Clock()
         self.is_running = False
+        self.is_paused = False
+        self._paused_text_entity = -1
         self.framerate = self.window_cfg["framerate"]
         self.delta_time = 0
         self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"],
@@ -96,6 +99,8 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):
+        if self.is_paused:
+            return
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
         system_enemy_hunter_state(self.ecs_world, self._player_entity, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
@@ -141,9 +146,21 @@ class GameEngine:
                 self._player_c_v.vel.y += input_velocity
             elif c_input.phase == CommandPhase.END:
                 self._player_c_v.vel.y -= input_velocity
-        elif c_input.name == "PLAYER_FIRE":
+        elif c_input.name == "GAME_PAUSE":
             if c_input.phase == CommandPhase.START:
+                self._toggle_pause()
+        elif c_input.name == "PLAYER_FIRE":
+            if c_input.phase == CommandPhase.START and not self.is_paused:
                 if len(self.ecs_world.get_component(CTagBullet)) < self._max_bullets:
                     create_bullet(self.ecs_world, self.bullet_cfg,
                                   self._player_c_t.pos, pygame.Vector2(self._player_c_s.area.size),
                                   pygame.Vector2(pygame.mouse.get_pos()))
+
+    def _toggle_pause(self):
+        self.is_paused = not self.is_paused
+        if self.is_paused:
+            self._paused_text_entity = create_text(self.ecs_world, self.interface_cfg["paused"])
+            ServiceLocator.sounds_service.pause_all()
+        else:
+            self.ecs_world.delete_entity(self._paused_text_entity)
+            ServiceLocator.sounds_service.resume_all()
