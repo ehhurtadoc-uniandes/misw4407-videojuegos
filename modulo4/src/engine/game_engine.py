@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 import esper
 import pygame
@@ -49,22 +48,14 @@ class GameEngine:
         self.ecs_world = esper.World()
 
     def _load_config_files(self) -> None:
-        with open("assets/cfg/window.json", encoding="utf-8") as window_file:
-            self.window_cfg = json.load(window_file)
-        with open("assets/cfg/enemies.json", encoding="utf-8") as enemies_file:
-            self.enemies_cfg = json.load(enemies_file)
-        with open("assets/cfg/level_01.json", encoding="utf-8") as level_file:
-            self.level_01_cfg = json.load(level_file)
-        with open("assets/cfg/player.json", encoding="utf-8") as player_file:
-            self.player_cfg = json.load(player_file)
-        with open("assets/cfg/bullet.json", encoding="utf-8") as bullet_file:
-            self.bullet_cfg = json.load(bullet_file)
-        with open("assets/cfg/explosion.json", encoding="utf-8") as explosion_file:
-            self.explosion_cfg = json.load(explosion_file)
-        with open("assets/cfg/interface.json", encoding="utf-8") as interface_file:
-            self.interface_cfg = json.load(interface_file)
-        with open("assets/cfg/sounds.json", encoding="utf-8") as sounds_file:
-            self.sounds_cfg = json.load(sounds_file)
+        self.window_cfg = ServiceLocator.configs_service.get("assets/cfg/window.json")
+        self.enemies_cfg = ServiceLocator.configs_service.get("assets/cfg/enemies.json")
+        self.level_01_cfg = ServiceLocator.configs_service.get("assets/cfg/level_01.json")
+        self.player_cfg = ServiceLocator.configs_service.get("assets/cfg/player.json")
+        self.bullet_cfg = ServiceLocator.configs_service.get("assets/cfg/bullet.json")
+        self.explosion_cfg = ServiceLocator.configs_service.get("assets/cfg/explosion.json")
+        self.interface_cfg = ServiceLocator.configs_service.get("assets/cfg/interface.json")
+        self.sounds_cfg = ServiceLocator.configs_service.get("assets/cfg/sounds.json")
 
     async def run(self) -> None:
         self._create()
