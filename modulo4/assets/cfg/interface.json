@@ -26,5 +26,78 @@
             "x": 320,
             "y": 120
         }
+    },
+    "instructions": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "FLECHAS: MOVER  CLIC: DISPARAR  ESPACIO: ESCUDO  P: PAUSA",
+        "size": 8,
+        "color": {
+            "r": 200,
+            "g": 200,
+            "b": 200
+        },
+        "position": {
+            "x": 320,
+            "y": 346
+        }
+    },
+    "shield_label": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "ESCUDO",
+        "size": 8,
+        "color": {
+            "r": 120,
+            "g": 190,
+            "b": 255
+        },
+        "position": {
+            "x": 52,
+            "y": 8
+        }
+    },
+    "shield_status": {
+        "font": "assets/fnt/PressStart2P.ttf",
+        "text": "LISTO",
+        "text_active": "ACTIVO",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "position": {
+            "x": 52,
+            "y": 30
+        }
+    },
+    "shield_bar": {
+        "position": {
+            "x": 12,
+            "y": 20
+        },
+        "size": {
+            "w": 80,
+            "h": 6
+        },
+        "color_background": {
+            "r": 60,
+            "g": 60,
+            "b": 60
+        },
+        "color_ready": {
+            "r": 80,
+            "g": 220,
+            "b": 120
+        },
+        "color_active": {
+            "r": 120,
+            "g": 190,
+            "b": 255
+        },
+        "color_cooldown": {
+            "r": 255,
+            "g": 200,
+            "b": 60
+        }
     }
 }

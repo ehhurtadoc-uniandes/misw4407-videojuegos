@@ -18,6 +18,8 @@ def system_collision_player_enemy(world: esper.World, player_entity: int, player
     c_t: CTransform
     c_s: CSurface
     for enemy_entity, (c_t, c_s, _) in enemies:
+        if not world.entity_exists(enemy_entity):
+            continue
         enemy_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
         if enemy_rect.colliderect(player_rect):
             world.delete_entity(enemy_entity)

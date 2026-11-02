@@ -6,7 +6,12 @@ import pygame
 
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemy_hunter import CEnemyHunter
+from src.ecs.components.c_hud_bar import CHudBar
+from src.ecs.components.c_hud_text import CHudText
 from src.ecs.components.c_player_state import CPlayerState
+from src.ecs.components.c_pulse import CPulse
+from src.ecs.components.c_screen_shake import CScreenShake
+from src.ecs.components.c_special_ability import CSpecialAbility
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_surface import CSurface
@@ -17,7 +22,8 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy, EnemyType
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
-from src.ecs.components.tags.c_tag_text import CTagText
+from src.ecs.components.tags.c_tag_shield import CTagShield
+from src.ecs.components.tags.c_tag_ui import CTagUI
 from src.engine.service_locator import ServiceLocator
 
 
@@ -77,12 +83,16 @@ def create_input_player(world: esper.World) -> None:
     input_down = world.create_entity()
     input_fire = world.create_entity()
     input_pause = world.create_entity()
+    input_special_key = world.create_entity()
+    input_special_mouse = world.create_entity()
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
     world.add_component(input_up, CInputCommand("PLAYER_UP", pygame.K_UP))
     world.add_component(input_down, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
     world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
     world.add_component(input_pause, CInputCommand("GAME_PAUSE", pygame.K_p))
+    world.add_component(input_special_key, CInputCommand("PLAYER_SPECIAL", pygame.K_SPACE))
+    world.add_component(input_special_mouse, CInputCommand("PLAYER_SPECIAL", pygame.BUTTON_RIGHT))
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict,
@@ -128,14 +138,74 @@ def create_explosion(world: esper.World, center: pygame.Vector2, explosion_info:
 
 def create_text(world: esper.World, text_info: dict) -> int:
     font = ServiceLocator.fonts_service.get(text_info["font"], text_info["size"])
-    color = pygame.Color(text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])
-    c_s = CSurface.from_text(text_info["text"], font, color)
+    c_s = CSurface.from_text(text_info["text"], font, _get_color(text_info["color"]))
     pos = pygame.Vector2(text_info["position"]["x"] - c_s.area.w / 2, text_info["position"]["y"])
     text_entity = world.create_entity()
     world.add_component(text_entity, c_s)
     world.add_component(text_entity, CTransform(pos))
-    world.add_component(text_entity, CTagText())
+    world.add_component(text_entity, CTagUI())
     return text_entity
+
+
+def create_special_ability(world: esper.World, special_info: dict) -> int:
+    special_entity = world.create_entity()
+    world.add_component(special_entity, CSpecialAbility(special_info))
+    return special_entity
+
+
+def create_screen_shake(world: esper.World, shake_info: dict) -> int:
+    shake_entity = world.create_entity()
+    world.add_component(shake_entity, CScreenShake(shake_info))
+    return shake_entity
+
+
+def create_shield(world: esper.World, special_info: dict, center: pygame.Vector2) -> None:
+    shield_surface = ServiceLocator.images_service.get(special_info["image"])
+    shield_pos = center - _get_frame_size(shield_surface, special_info) / 2
+    shield_entity = create_sprite(world, shield_pos, pygame.Vector2(0, 0), shield_surface)
+    world.add_component(shield_entity, CTagShield())
+    _add_animation(world, shield_entity, special_info)
+
+    radius = special_info["radius"]
+    pulse_size = (radius + special_info["pulse"]["thickness"]) * 2
+    pulse_surface = pygame.Surface((pulse_size, pulse_size), pygame.SRCALPHA)
+    pulse_entity = create_sprite(world, center - pygame.Vector2(pulse_size) / 2, pygame.Vector2(0, 0),
+                                 pulse_surface)
+    world.add_component(pulse_entity, CPulse(radius, special_info["pulse"]))
+    world.add_component(pulse_entity, CTagShield())
+    ServiceLocator.sounds_service.play(special_info["sound"])
+
+
+def create_shield_hud(world: esper.World, interface_info: dict) -> None:
+    create_text(world, interface_info["shield_label"])
+
+    status_info = interface_info["shield_status"]
+    status_entity = create_text(world, status_info)
+    font = ServiceLocator.fonts_service.get(status_info["font"], status_info["size"])
+    world.add_component(status_entity, CHudText(font, _get_color(status_info["color"]),
+                                                status_info["position"]["x"],
+                                                status_info["text"], status_info["text_active"]))
+
+    bar_info = interface_info["shield_bar"]
+    bar_pos = pygame.Vector2(bar_info["position"]["x"], bar_info["position"]["y"])
+    bar_size = pygame.Vector2(bar_info["size"]["w"], bar_info["size"]["h"])
+    background_entity = world.create_entity()
+    world.add_component(background_entity, CSurface(bar_size, _get_color(bar_info["color_background"])))
+    world.add_component(background_entity, CTransform(pygame.Vector2(bar_pos)))
+    world.add_component(background_entity, CTagUI())
+
+    color_ready = _get_color(bar_info["color_ready"])
+    fill_entity = world.create_entity()
+    world.add_component(fill_entity, CSurface(bar_size, color_ready))
+    world.add_component(fill_entity, CTransform(pygame.Vector2(bar_pos)))
+    world.add_component(fill_entity, CTagUI())
+    world.add_component(fill_entity, CHudBar(bar_info["size"]["w"], color_ready,
+                                             _get_color(bar_info["color_active"]),
+                                             _get_color(bar_info["color_cooldown"])))
+
+
+def _get_color(color_info: dict) -> pygame.Color:
+    return pygame.Color(color_info["r"], color_info["g"], color_info["b"])
 
 
 def _get_frame_size(surface: pygame.Surface, info: dict) -> pygame.Vector2:

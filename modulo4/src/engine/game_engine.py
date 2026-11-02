@@ -3,7 +3,8 @@ import asyncio
 import esper
 import pygame
 
-from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet, create_text
+from src.create.prefab_creator import create_enemy_spawner, create_player_square, create_input_player, create_bullet, create_text, \
+    create_special_ability, create_screen_shake, create_shield, create_shield_hud
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
@@ -11,18 +12,23 @@ from src.ecs.systems.s_explosion import system_explosion
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rendering import system_rendering
-from src.ecs.systems.s_rendering_text import system_rendering_text
+from src.ecs.systems.s_rendering_ui import system_rendering_ui
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
+from src.ecs.systems.s_screen_shake import system_screen_shake
 from src.ecs.systems.s_screen_player import system_screen_player
 from src.ecs.systems.s_screen_bullet import system_screen_bullet
 from src.ecs.systems.s_collision_enemy_bullet import system_collision_enemy_bullet
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
+from src.ecs.systems.s_hud import system_hud
+from src.ecs.systems.s_pulse import system_pulse
+from src.ecs.systems.s_special_ability import system_special_ability
 
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_special_ability import CSpecialAbility, AbilityState
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.engine.service_locator import ServiceLocator
 
@@ -56,6 +62,7 @@ class GameEngine:
         self.explosion_cfg = ServiceLocator.configs_service.get("assets/cfg/explosion.json")
         self.interface_cfg = ServiceLocator.configs_service.get("assets/cfg/interface.json")
         self.sounds_cfg = ServiceLocator.configs_service.get("assets/cfg/sounds.json")
+        self.special_cfg = ServiceLocator.configs_service.get("assets/cfg/special.json")
 
     async def run(self) -> None:
         self._create()
@@ -81,6 +88,11 @@ class GameEngine:
         create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
         create_text(self.ecs_world, self.interface_cfg["title"])
+        create_text(self.ecs_world, self.interface_cfg["instructions"])
+        create_shield_hud(self.ecs_world, self.interface_cfg)
+        special_entity = create_special_ability(self.ecs_world, self.special_cfg)
+        self._special_c_sa = self.ecs_world.component_for_entity(special_entity, CSpecialAbility)
+        create_screen_shake(self.ecs_world, self.special_cfg["shake"])
 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -102,17 +114,21 @@ class GameEngine:
         system_screen_bounce(self.ecs_world, self.screen)
         system_screen_player(self.ecs_world, self.screen)
         system_screen_bullet(self.ecs_world, self.screen)
+        system_special_ability(self.ecs_world, self._player_entity, self.explosion_cfg, self.delta_time)
         system_collision_player_enemy(self.ecs_world, self._player_entity, self._player_spawn,
                                       self.explosion_cfg)
         system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg)
         system_animation(self.ecs_world, self.delta_time)
         system_explosion(self.ecs_world)
+        system_pulse(self.ecs_world, self.delta_time)
+        system_screen_shake(self.ecs_world, self.delta_time)
+        system_hud(self.ecs_world)
         self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self.bg_color)
         system_rendering(self.ecs_world, self.screen)
-        system_rendering_text(self.ecs_world, self.screen)
+        system_rendering_ui(self.ecs_world, self.screen)
         pygame.display.flip()
 
     def _clean(self):
@@ -143,6 +159,13 @@ class GameEngine:
         elif c_input.name == "GAME_PAUSE":
             if c_input.phase == CommandPhase.START:
                 self._toggle_pause()
+        elif c_input.name == "PLAYER_SPECIAL":
+            if (c_input.phase == CommandPhase.START and not self.is_paused
+                    and self._special_c_sa.state == AbilityState.READY):
+                self._special_c_sa.state = AbilityState.ACTIVE
+                self._special_c_sa.timer = self._special_c_sa.duration
+                player_center = self._player_c_t.pos + pygame.Vector2(self._player_c_s.area.size) / 2
+                create_shield(self.ecs_world, self.special_cfg, player_center)
         elif c_input.name == "PLAYER_FIRE":
             if c_input.phase == CommandPhase.START and not self.is_paused:
                 if len(self.ecs_world.get_component(CTagBullet)) < self._max_bullets:
