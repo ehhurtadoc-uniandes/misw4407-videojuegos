@@ -63,6 +63,8 @@ class GameEngine:
             self.explosion_cfg = json.load(explosion_file)
         with open("assets/cfg/interface.json", encoding="utf-8") as interface_file:
             self.interface_cfg = json.load(interface_file)
+        with open("assets/cfg/sounds.json", encoding="utf-8") as sounds_file:
+            self.sounds_cfg = json.load(sounds_file)
 
     async def run(self) -> None:
         self._create()
@@ -80,7 +82,8 @@ class GameEngine:
         self._player_spawn = pygame.Vector2(player_spawn_cfg["position"]["x"],
                                             player_spawn_cfg["position"]["y"])
         self._max_bullets = player_spawn_cfg["max_bullets"]
-        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, player_spawn_cfg)
+        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, player_spawn_cfg,
+                                                   self.sounds_cfg["player_move"])
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)

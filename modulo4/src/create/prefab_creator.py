@@ -85,7 +85,8 @@ def create_input_player(world: esper.World) -> None:
     world.add_component(input_pause, CInputCommand("GAME_PAUSE", pygame.K_p))
 
 
-def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
+def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict,
+                         sound_move: str) -> int:
     player_sprite = ServiceLocator.images_service.get(player_info["image"])
     size = _get_frame_size(player_sprite, player_info)
     pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size.x / 2),
@@ -93,7 +94,7 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
-    world.add_component(player_entity, CPlayerState())
+    world.add_component(player_entity, CPlayerState(sound_move))
     _add_animation(world, player_entity, player_info)
     return player_entity
 
